@@ -1,0 +1,97 @@
+.how-it-works {
+  padding: 100px 0 60px;
+  background: var(--white);
+}
+
+.how-it-works-head {
+  text-align: center;
+}
+
+.how-it-works-head h2 {
+  margin-top: 14px;
+  font-size: 34px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 64px;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.step-connector {
+  position: absolute;
+  top: 35px;
+  left: calc(50% + 55px);
+  right: calc(-50% + 55px);
+  border-top: 2px dashed var(--green-200);
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--green-50);
+  border: 1.5px solid var(--green-200);
+  color: var(--green-500);
+  position: relative;
+  z-index: 1;
+}
+
+.step-label {
+  margin-top: 22px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.step-title {
+  margin-top: 8px;
+  font-size: 20px;
+}
+
+.step-desc {
+  margin-top: 10px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+.how-it-works-divider {
+  margin-top: 70px;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 48px;
+  }
+
+  .step-connector {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .how-it-works {
+    padding: 72px 0 40px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
