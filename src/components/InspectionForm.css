@@ -23,35 +23,10 @@
 }
 
 .hero-card-question {
-  margin-top: 26px;
+  margin-top: 22px;
   font-size: 14.5px;
   font-weight: 600;
   color: var(--ink);
-}
-
-.hero-card-toggle {
-  display: flex;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.hero-card-toggle button {
-  flex: 1;
-  padding: 13px 0;
-  border-radius: var(--radius-pill);
-  border: 1.5px solid var(--border);
-  background: var(--white);
-  color: var(--body);
-  font-weight: 600;
-  font-size: 15px;
-  transition: all 0.15s ease;
-}
-
-.hero-card-toggle button.is-active {
-  background: var(--green-500);
-  border-color: var(--green-500);
-  color: var(--white);
-  box-shadow: 0 10px 22px rgba(34, 163, 93, 0.3);
 }
 
 .hero-card-social {
@@ -89,35 +64,53 @@
   color: var(--ink);
 }
 
-.form-progress {
-  margin-top: 22px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* --- Funnel header --- */
+
+.form-eyebrow {
+  color: var(--teal);
+  font-size: 12px;
 }
 
-.form-progress-track {
+.hero-card-title + .stepper-progress {
+  margin-top: 20px;
+}
+
+.form-eyebrow + .hero-card-title {
+  margin-top: 6px;
+}
+
+.stepper-progress {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.stepper-segment {
   flex: 1;
   height: 6px;
   border-radius: var(--radius-pill);
-  background: var(--border);
-  overflow: hidden;
+  background: var(--track);
 }
 
-.form-progress-fill {
-  height: 100%;
-  border-radius: var(--radius-pill);
-  background: var(--green-500);
-  transition: width 0.35s ease;
+.stepper-segment.is-complete {
+  background: var(--green-700);
 }
 
-.form-progress-label {
-  flex-shrink: 0;
-  font-size: 12px;
+.stepper-segment.is-active {
+  background: var(--orange);
+}
+
+.stepper-label {
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+  font-size: 11.5px;
   font-weight: 700;
-  color: var(--muted);
-  white-space: nowrap;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
 }
+
+/* --- Step transition --- */
 
 .form-step {
   animation: step-in 0.32s ease;
@@ -134,110 +127,214 @@
   }
 }
 
-.form-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  background: none;
-  border: none;
-  padding: 0;
-  margin-top: 18px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--muted);
-}
+/* --- Option cards (radio-style) --- */
 
-.form-back:hover {
-  color: var(--ink);
-}
-
-.form-step .hero-card-question {
-  margin-top: 14px;
-}
-
-.form-step:has(.form-back) .hero-card-question {
+.option-grid {
+  display: grid;
+  gap: 10px;
   margin-top: 12px;
 }
 
-.pest-grid {
-  display: grid;
+.option-grid.two-col {
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
 }
 
-.pest-grid button {
+.option-card {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 13px 14px;
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--border);
   background: var(--white);
-  color: var(--body);
+  color: var(--ink);
   font-weight: 600;
   font-size: 13.5px;
+  text-align: left;
   transition: all 0.15s ease;
 }
 
-.pest-grid button svg {
-  color: var(--green-500);
-  flex-shrink: 0;
-}
-
-.pest-grid button.is-active {
-  background: var(--green-500);
+.option-card.is-selected {
+  background: var(--green-50);
   border-color: var(--green-500);
-  color: var(--white);
-  box-shadow: 0 10px 22px rgba(34, 163, 93, 0.3);
 }
 
-.pest-grid button.is-active svg {
-  color: var(--white);
-}
-
-.contact-form {
+.option-radio {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.contact-form input {
-  width: 100%;
-  padding: 13px 16px;
-  border-radius: var(--radius-sm);
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
   border: 1.5px solid var(--border);
-  font-family: var(--font-body);
-  font-size: 14.5px;
-  color: var(--ink);
-  background: var(--bg-soft);
+  flex-shrink: 0;
   transition: border-color 0.15s ease;
 }
 
-.contact-form input::placeholder {
+.option-card.is-selected .option-radio {
+  border-color: var(--green-500);
+}
+
+.option-radio-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green-600);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: all 0.15s ease;
+}
+
+.option-card.is-selected .option-radio-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- Select dropdown --- */
+
+.select-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+
+.select-wrap select {
+  width: 100%;
+  appearance: none;
+  padding: 13px 40px 13px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.select-wrap select:invalid,
+.select-wrap select option[value=''] {
   color: var(--muted);
 }
 
-.contact-form input:focus {
+.select-wrap select:focus {
   outline: none;
   border-color: var(--green-500);
-  background: var(--white);
 }
 
-.contact-submit {
-  width: 100%;
-  margin-top: 4px;
-  padding: 14px 0;
-}
-
-.contact-submit:disabled {
-  background: var(--border);
+.select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--muted);
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
+  pointer-events: none;
 }
+
+/* --- Labeled text fields --- */
+
+.field-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.field-grid.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.field-grid .field {
+  margin-top: 0;
+}
+
+.field > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+  transition: border-color 0.15s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--green-500);
+}
+
+/* --- Consent + nav --- */
+
+.consent-text {
+  margin-top: 18px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.consent-text a {
+  color: var(--green-600);
+  text-decoration: underline;
+}
+
+.step-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.step-back-btn {
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.step-back-btn:hover {
+  background: var(--bg-soft);
+}
+
+.step-continue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--green-700);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.step-continue-btn:hover:not(:disabled) {
+  background: var(--dark);
+}
+
+.step-continue-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- Success state --- */
 
 .form-success {
   text-align: center;
@@ -278,4 +375,11 @@
 
 .form-restart:hover {
   background: var(--border);
+}
+
+@media (max-width: 420px) {
+  .option-grid.two-col,
+  .field-grid.two-col {
+    grid-template-columns: 1fr;
+  }
 }

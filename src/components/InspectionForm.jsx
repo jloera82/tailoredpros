@@ -1,10 +1,26 @@
 import { useState } from 'react'
-import { ChevronLeft, CheckCircle2, Bug } from 'lucide-react'
+import { CheckCircle2, ChevronDown, ArrowRight } from 'lucide-react'
 import './InspectionForm.css'
 
-const TOTAL_STEPS = 3
+const TOTAL_STEPS = 4
 
-const PEST_OPTIONS = ['Ants', 'Rodents', 'Roaches', 'Termites', 'Bed Bugs', 'Not Sure']
+const PEST_OPTIONS = [
+  'Ants',
+  'Bed Bugs',
+  'Cockroaches',
+  'Fleas & Ticks',
+  'Mice & Rodents',
+  'Mosquitoes',
+  'Spiders',
+  'Termites',
+  'Wasps & Bees',
+  'Other / Not Sure',
+]
+
+const PROPERTY_TYPES = ['Single family home', 'Multi-unit', 'Commercial', 'Condo', 'Mobile home']
+const SERVICE_NEEDS = ['Extermination', 'Inspection', 'Prevention', 'Removal']
+const URGENCY_OPTIONS = ['Within 1 week', 'Within 2 weeks', 'Within 1 month', 'Timing is flexible']
+const CALL_TIMES = ['Morning', 'Afternoon', 'Evening', 'Any time']
 
 const JOIN_AVATARS = [
   'https://randomuser.me/api/portraits/women/65.jpg',
@@ -24,36 +40,89 @@ function formatPhone(value) {
   return ''
 }
 
-const INITIAL_ANSWERS = { owner: '', pest: '', name: '', phone: '', email: '' }
+const INITIAL_ANSWERS = {
+  owner: '',
+  pestType: '',
+  propertyType: '',
+  serviceNeed: '',
+  urgency: '',
+  firstName: '',
+  lastName: '',
+  phone: '',
+  email: '',
+  bestTime: '',
+  address: '',
+  city: '',
+  state: '',
+  zip: '',
+}
+
+function OptionCard({ label, selected, onSelect }) {
+  return (
+    <button type="button" className={`option-card ${selected ? 'is-selected' : ''}`} onClick={onSelect}>
+      <span className="option-radio">
+        <span className="option-radio-dot" />
+      </span>
+      {label}
+    </button>
+  )
+}
+
+function Field({ label, children }) {
+  return (
+    <label className="field">
+      <span>{label}</span>
+      {children}
+    </label>
+  )
+}
+
+function isStepValid(step, a) {
+  switch (step) {
+    case 1:
+      return Boolean(a.pestType && a.propertyType)
+    case 2:
+      return Boolean(a.serviceNeed && a.urgency)
+    case 3:
+      return Boolean(
+        a.firstName.trim() &&
+          a.lastName.trim() &&
+          a.phone.replace(/\D/g, '').length === 10 &&
+          /^\S+@\S+\.\S+$/.test(a.email) &&
+          a.bestTime
+      )
+    case 4:
+      return Boolean(a.address.trim() && a.city.trim() && a.state.trim() && a.zip.trim().length >= 5)
+    default:
+      return true
+  }
+}
 
 export default function InspectionForm() {
-  const [step, setStep] = useState(1)
+  const [phase, setPhase] = useState('gate')
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
 
-  const isDone = step > TOTAL_STEPS
-  const progressPct = isDone ? 100 : ((step - 1) / TOTAL_STEPS) * 100
+  const set = (field, value) => setAnswers((a) => ({ ...a, [field]: value }))
 
-  const selectAndAdvance = (field, value) => {
-    setAnswers((a) => ({ ...a, [field]: value }))
-    window.setTimeout(() => setStep((s) => Math.min(s + 1, TOTAL_STEPS + 1)), 280)
+  const selectOwner = (value) => {
+    set('owner', value)
+    window.setTimeout(() => setPhase(1), 280)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!answers.name.trim() || answers.phone.replace(/\D/g, '').length < 10) return
-    setStep(TOTAL_STEPS + 1)
-  }
+  const goBack = () => setPhase((p) => (p === 1 ? 'gate' : p - 1))
+  const goNext = () => setPhase((p) => (p === TOTAL_STEPS ? 'success' : p + 1))
 
   const restart = () => {
     setAnswers(INITIAL_ANSWERS)
-    setStep(1)
+    setPhase('gate')
   }
 
-  const contactValid = answers.name.trim().length > 1 && answers.phone.replace(/\D/g, '').length === 10
+  const isFunnelStep = typeof phase === 'number'
+  const stepValid = isFunnelStep && isStepValid(phase, answers)
 
   return (
     <div className="hero-card">
-      {!isDone ? (
+      {phase === 'gate' && (
         <>
           <h3 className="hero-card-title">
             Get Your <span className="text-green">Free</span>
@@ -62,117 +131,189 @@ export default function InspectionForm() {
           </h3>
           <p className="hero-card-sub">Quick. Easy. No Obligation.</p>
 
-          <div className="form-progress">
-            <div className="form-progress-track">
-              <div className="form-progress-fill" style={{ width: `${progressPct}%` }} />
-            </div>
-            <span className="form-progress-label">
-              Step {step} of {TOTAL_STEPS}
-            </span>
+          <p className="hero-card-question">Do you own this property?</p>
+          <div className="option-grid two-col">
+            <OptionCard label="Yes" selected={answers.owner === 'yes'} onSelect={() => selectOwner('yes')} />
+            <OptionCard label="No" selected={answers.owner === 'no'} onSelect={() => selectOwner('no')} />
           </div>
 
-          <div className="form-step" key={step}>
-            {step > 1 && (
-              <button type="button" className="form-back" onClick={() => setStep((s) => s - 1)}>
-                <ChevronLeft size={15} strokeWidth={2.5} />
-                Back
-              </button>
-            )}
+          <div className="hero-card-social">
+            <div className="avatar-stack">
+              {JOIN_AVATARS.map((src) => (
+                <img key={src} src={src} alt="" />
+              ))}
+            </div>
+            <p>
+              Join <strong>500+ homeowners</strong> who trust Tailored Pros
+            </p>
+          </div>
+        </>
+      )}
 
-            {step === 1 && (
+      {isFunnelStep && (
+        <>
+          <p className="eyebrow form-eyebrow">Free Quote Request</p>
+          <h3 className="hero-card-title">Get matched with a local pro</h3>
+
+          <div className="stepper-progress">
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => {
+              const n = i + 1
+              const state = n < phase ? 'is-complete' : n === phase ? 'is-active' : ''
+              return <span className={`stepper-segment ${state}`} key={n} />
+            })}
+          </div>
+          <p className="stepper-label">
+            Step {phase} of {TOTAL_STEPS}
+          </p>
+
+          <div className="form-step" key={phase}>
+            {phase === 1 && (
               <>
-                <p className="hero-card-question">1. Is this property owned by you?</p>
-                <div className="hero-card-toggle">
-                  <button
-                    type="button"
-                    className={answers.owner === 'no' ? 'is-active' : ''}
-                    onClick={() => selectAndAdvance('owner', 'no')}
-                  >
-                    No
-                  </button>
-                  <button
-                    type="button"
-                    className={answers.owner === 'yes' ? 'is-active' : ''}
-                    onClick={() => selectAndAdvance('owner', 'yes')}
-                  >
-                    Yes
-                  </button>
+                <div className="field">
+                  <span>What pest are you dealing with?</span>
+                  <div className="select-wrap">
+                    <select value={answers.pestType} onChange={(e) => set('pestType', e.target.value)}>
+                      <option value="">Select one</option>
+                      {PEST_OPTIONS.map((pest) => (
+                        <option key={pest} value={pest}>
+                          {pest}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={16} strokeWidth={2.5} className="select-chevron" />
+                  </div>
                 </div>
-              </>
-            )}
 
-            {step === 2 && (
-              <>
-                <p className="hero-card-question">2. What pest are you dealing with?</p>
-                <div className="pest-grid">
-                  {PEST_OPTIONS.map((pest) => (
-                    <button
-                      type="button"
-                      key={pest}
-                      className={answers.pest === pest ? 'is-active' : ''}
-                      onClick={() => selectAndAdvance('pest', pest)}
-                    >
-                      <Bug size={15} strokeWidth={2} />
-                      {pest}
-                    </button>
+                <p className="hero-card-question">Property type</p>
+                <div className="option-grid two-col">
+                  {PROPERTY_TYPES.map((type) => (
+                    <OptionCard
+                      key={type}
+                      label={type}
+                      selected={answers.propertyType === type}
+                      onSelect={() => set('propertyType', type)}
+                    />
                   ))}
                 </div>
               </>
             )}
 
-            {step === 3 && (
+            {phase === 2 && (
               <>
-                <p className="hero-card-question">3. Where should we send your quote?</p>
-                <form className="contact-form" onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    placeholder="Full name"
-                    value={answers.name}
-                    onChange={(e) => setAnswers((a) => ({ ...a, name: e.target.value }))}
-                    required
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone number"
-                    value={answers.phone}
-                    onChange={(e) =>
-                      setAnswers((a) => ({ ...a, phone: formatPhone(e.target.value) }))
-                    }
-                    required
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email (optional)"
-                    value={answers.email}
-                    onChange={(e) => setAnswers((a) => ({ ...a, email: e.target.value }))}
-                  />
-                  <button type="submit" className="btn btn-primary contact-submit" disabled={!contactValid}>
-                    Get My Free Quote
-                  </button>
-                </form>
+                <p className="hero-card-question">What do you need?</p>
+                <div className="option-grid two-col">
+                  {SERVICE_NEEDS.map((need) => (
+                    <OptionCard
+                      key={need}
+                      label={need}
+                      selected={answers.serviceNeed === need}
+                      onSelect={() => set('serviceNeed', need)}
+                    />
+                  ))}
+                </div>
+
+                <p className="hero-card-question">How soon do you need this handled?</p>
+                <div className="option-grid two-col">
+                  {URGENCY_OPTIONS.map((u) => (
+                    <OptionCard
+                      key={u}
+                      label={u}
+                      selected={answers.urgency === u}
+                      onSelect={() => set('urgency', u)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {phase === 3 && (
+              <>
+                <div className="field-grid two-col">
+                  <Field label="First name">
+                    <input type="text" value={answers.firstName} onChange={(e) => set('firstName', e.target.value)} />
+                  </Field>
+                  <Field label="Last name">
+                    <input type="text" value={answers.lastName} onChange={(e) => set('lastName', e.target.value)} />
+                  </Field>
+                </div>
+                <div className="field-grid two-col">
+                  <Field label="Phone">
+                    <input
+                      type="tel"
+                      value={answers.phone}
+                      onChange={(e) => set('phone', formatPhone(e.target.value))}
+                    />
+                  </Field>
+                  <Field label="Email">
+                    <input type="email" value={answers.email} onChange={(e) => set('email', e.target.value)} />
+                  </Field>
+                </div>
+
+                <p className="hero-card-question">Best time to call</p>
+                <div className="option-grid two-col">
+                  {CALL_TIMES.map((time) => (
+                    <OptionCard
+                      key={time}
+                      label={time}
+                      selected={answers.bestTime === time}
+                      onSelect={() => set('bestTime', time)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {phase === 4 && (
+              <>
+                <Field label="Street address">
+                  <input type="text" value={answers.address} onChange={(e) => set('address', e.target.value)} />
+                </Field>
+                <div className="field-grid two-col">
+                  <Field label="City">
+                    <input type="text" value={answers.city} onChange={(e) => set('city', e.target.value)} />
+                  </Field>
+                  <Field label="State">
+                    <input type="text" value={answers.state} onChange={(e) => set('state', e.target.value)} />
+                  </Field>
+                </div>
+                <div className="field-grid two-col">
+                  <Field label="Zip code">
+                    <input type="text" value={answers.zip} onChange={(e) => set('zip', e.target.value)} />
+                  </Field>
+                  <span />
+                </div>
+
+                <p className="consent-text">
+                  By submitting, you agree that Tailored Pros and up to three local service partners
+                  may contact you by phone, text, or email about your request — including using
+                  automated dialing or pre-recorded messages — even if your number is on a
+                  do-not-call list. Consent isn&rsquo;t required to purchase services. See our{' '}
+                  <a href="#privacy">Privacy Policy</a> and <a href="#terms">Terms</a>.
+                </p>
               </>
             )}
           </div>
 
-          {step === 1 && (
-            <div className="hero-card-social">
-              <div className="avatar-stack">
-                {JOIN_AVATARS.map((src) => (
-                  <img key={src} src={src} alt="" />
-                ))}
-              </div>
-              <p>
-                Join <strong>500+ homeowners</strong> who trust Tailored Pros
-              </p>
-            </div>
-          )}
+          <div className="step-nav">
+            <button type="button" className="step-back-btn" onClick={goBack}>
+              Back
+            </button>
+            <button type="button" className="step-continue-btn" disabled={!stepValid} onClick={goNext}>
+              {phase === TOTAL_STEPS ? 'Get my free quotes' : 'Continue'}
+              <ArrowRight size={16} strokeWidth={2.5} />
+            </button>
+          </div>
         </>
-      ) : (
+      )}
+
+      {phase === 'success' && (
         <div className="form-success">
           <span className="form-success-icon">
             <CheckCircle2 size={30} strokeWidth={2} />
           </span>
-          <h3 className="hero-card-title">You&rsquo;re All Set{answers.name ? `, ${answers.name.split(' ')[0]}` : ''}!</h3>
+          <h3 className="hero-card-title">
+            You&rsquo;re All Set{answers.firstName ? `, ${answers.firstName}` : ''}!
+          </h3>
           <p className="form-success-desc">
             A Tailored Pros specialist will call{' '}
             {answers.phone ? <strong>{answers.phone}</strong> : 'you'} within 24 hours to schedule
