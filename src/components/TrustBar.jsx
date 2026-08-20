@@ -1,23 +1,6 @@
-import { useState } from 'react'
 import { Star, ChevronRight } from 'lucide-react'
+import { telHref } from '../data/serviceAreas.js'
 import './TrustBar.css'
-
-const SERVICE_AREAS = [
-  { city: 'Austin', phone: '(512) 555-0142', reviews: 412 },
-  { city: 'Houston', phone: '(713) 555-0198', reviews: 587 },
-  { city: 'San Antonio', phone: '(210) 555-0173', reviews: 350 },
-  { city: 'Dallas', phone: '(214) 555-0126', reviews: 468 },
-  { city: 'Fort Worth', phone: '(817) 555-0159', reviews: 291 },
-  { city: 'El Paso', phone: '(915) 555-0184', reviews: 226 },
-]
-
-function pickServiceArea() {
-  return SERVICE_AREAS[Math.floor(Math.random() * SERVICE_AREAS.length)]
-}
-
-function telHref(phone) {
-  return `tel:+1${phone.replace(/\D/g, '')}`
-}
 
 function GoogleIcon(props) {
   return (
@@ -42,9 +25,7 @@ function GoogleIcon(props) {
   )
 }
 
-export default function TrustBar() {
-  const [area] = useState(pickServiceArea)
-
+export default function TrustBar({ area }) {
   return (
     <div className="trust-bar-wrap">
       <div className="container">

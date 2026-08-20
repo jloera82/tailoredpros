@@ -1,45 +1,18 @@
 import { Star } from 'lucide-react'
+import { REVIEWS_BY_CITY } from '../data/testimonials.js'
 import './Testimonials.css'
 
-const REVIEWS = [
-  {
-    quote:
-      'Tailored Pros was professional, thorough, and incredibly effective. We haven’t seen a single pest since!',
-    name: 'Sarah T.',
-    location: 'Austin, TX',
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-  },
-  {
-    quote:
-      'I love that they use eco-friendly products. It’s safe for my kids and pets, and it works!',
-    name: 'Mark R.',
-    location: 'Houston, TX',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  },
-  {
-    quote:
-      'Fast response, great service, and very knowledgeable technicians. Highly recommend!',
-    name: 'Jessica M.',
-    location: 'San Antonio, TX',
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-  },
-  {
-    quote:
-      'Finally found a pest control company I can trust. They go above and beyond!',
-    name: 'David L.',
-    location: 'Dallas, TX',
-    avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
-  },
-]
+export default function Testimonials({ area }) {
+  const city = area?.city ?? 'Austin'
+  const reviews = REVIEWS_BY_CITY[city] ?? REVIEWS_BY_CITY.Austin
 
-export default function Testimonials() {
   return (
     <section className="testimonials">
       <div className="container">
-        <h2 className="testimonials-title">Trusted by Homeowners Like You</h2>
+        <h2 className="testimonials-title">Trusted by Homeowners in {city}</h2>
 
         <div className="testimonials-grid">
-          {REVIEWS.map((review) => (
+          {reviews.map((review) => (
             <div className="review-card" key={review.name}>
               <div className="review-stars">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -51,7 +24,7 @@ export default function Testimonials() {
                 <img src={review.avatar} alt={review.name} />
                 <div>
                   <p className="review-name">{review.name}</p>
-                  <p className="review-location">{review.location}</p>
+                  <p className="review-location">{city}, TX</p>
                 </div>
               </div>
             </div>
