@@ -1,8 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Star, ChevronRight } from 'lucide-react'
 import './TrustBar.css'
 
-const FALLBACK_CITY = 'Your Area'
+const SERVICE_AREAS = [
+  { city: 'Austin', phone: '(512) 555-0142', reviews: 412 },
+  { city: 'Houston', phone: '(713) 555-0198', reviews: 587 },
+  { city: 'San Antonio', phone: '(210) 555-0173', reviews: 350 },
+  { city: 'Dallas', phone: '(214) 555-0126', reviews: 468 },
+  { city: 'Fort Worth', phone: '(817) 555-0159', reviews: 291 },
+  { city: 'El Paso', phone: '(915) 555-0184', reviews: 226 },
+]
+
+function pickServiceArea() {
+  return SERVICE_AREAS[Math.floor(Math.random() * SERVICE_AREAS.length)]
+}
+
+function telHref(phone) {
+  return `tel:+1${phone.replace(/\D/g, '')}`
+}
 
 function GoogleIcon(props) {
   return (
@@ -28,26 +43,7 @@ function GoogleIcon(props) {
 }
 
 export default function TrustBar() {
-  const [city, setCity] = useState(FALLBACK_CITY)
-
-  useEffect(() => {
-    let cancelled = false
-
-    fetch('https://ipwho.is/')
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled && data?.success && data.city) {
-          setCity(data.city)
-        }
-      })
-      .catch(() => {
-        /* keep fallback city */
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const [area] = useState(pickServiceArea)
 
   return (
     <div className="trust-bar-wrap">
@@ -55,7 +51,7 @@ export default function TrustBar() {
         <div className="trust-bar">
           <div className="local-business">
             <p className="local-eyebrow">Serving Your Area 24/7</p>
-            <h3 className="local-name">Tailored Pros of {city}</h3>
+            <h3 className="local-name">Tailored Pros of {area.city}</h3>
           </div>
 
           <div className="reviews-block">
@@ -66,7 +62,7 @@ export default function TrustBar() {
                   <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
                 ))}
                 <span className="reviews-score">4.9</span>
-                <span className="reviews-count">(500+ reviews)</span>
+                <span className="reviews-count">({area.reviews} reviews)</span>
               </div>
               <a className="reviews-cta" href="#reviews">
                 <GoogleIcon />
@@ -74,8 +70,8 @@ export default function TrustBar() {
               </a>
             </div>
 
-            <a className="local-phone" href="tel:+18336520244">
-              (833) 652-0244
+            <a className="local-phone" href={telHref(area.phone)}>
+              {area.phone}
               <span className="local-phone-chevron">
                 <ChevronRight size={18} strokeWidth={3} />
               </span>
