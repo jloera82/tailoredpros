@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import TrustBar from './components/TrustBar.jsx'
@@ -7,10 +7,22 @@ import HowItWorks from './components/HowItWorks.jsx'
 import Testimonials from './components/Testimonials.jsx'
 import CTA from './components/CTA.jsx'
 import Footer from './components/Footer.jsx'
-import { pickServiceArea } from './data/serviceAreas.js'
+import { detectLocation, FALLBACK_AREA } from './data/serviceAreas.js'
 
 export default function App() {
-  const [area] = useState(pickServiceArea)
+  const [area, setArea] = useState(FALLBACK_AREA)
+
+  useEffect(() => {
+    let cancelled = false
+
+    detectLocation().then((result) => {
+      if (!cancelled) setArea(result)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   return (
     <>

@@ -11,7 +11,7 @@
 .testimonials-grid {
   margin-top: 56px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
@@ -65,12 +65,9 @@
   margin-top: 2px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .testimonials-grid {
-    grid-template-columns: 1fr;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -81,6 +78,10 @@
 
   .testimonials-title {
     font-size: 26px;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
   }
 
   .review-quote {

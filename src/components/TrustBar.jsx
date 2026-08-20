@@ -1,5 +1,5 @@
 import { Star, ChevronRight } from 'lucide-react'
-import { telHref } from '../data/serviceAreas.js'
+import { MAIN_PHONE, telHref } from '../data/serviceAreas.js'
 import './TrustBar.css'
 
 function GoogleIcon(props) {
@@ -43,7 +43,7 @@ export default function TrustBar({ area }) {
                   <Star key={i} size={16} fill="currentColor" strokeWidth={0} />
                 ))}
                 <span className="reviews-score">4.9</span>
-                <span className="reviews-count">({area.reviews} reviews)</span>
+                <span className="reviews-count">(500+ reviews)</span>
               </div>
               <a className="reviews-cta" href="#reviews">
                 <GoogleIcon />
@@ -51,8 +51,8 @@ export default function TrustBar({ area }) {
               </a>
             </div>
 
-            <a className="local-phone" href={telHref(area.phone)}>
-              {area.phone}
+            <a className="local-phone" href={telHref(MAIN_PHONE)}>
+              {MAIN_PHONE}
               <span className="local-phone-chevron">
                 <ChevronRight size={18} strokeWidth={3} />
               </span>

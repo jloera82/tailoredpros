@@ -1,16 +1,43 @@
-export const SERVICE_AREAS = [
-  { city: 'Austin', phone: '(512) 555-0142', reviews: 412 },
-  { city: 'Houston', phone: '(713) 555-0198', reviews: 587 },
-  { city: 'San Antonio', phone: '(210) 555-0173', reviews: 350 },
-  { city: 'Dallas', phone: '(214) 555-0126', reviews: 468 },
-  { city: 'Fort Worth', phone: '(817) 555-0159', reviews: 291 },
-  { city: 'El Paso', phone: '(915) 555-0184', reviews: 226 },
-]
-
-export function pickServiceArea() {
-  return SERVICE_AREAS[Math.floor(Math.random() * SERVICE_AREAS.length)]
-}
+export const MAIN_PHONE = '(833) 652-0244'
+export const FALLBACK_AREA = { city: 'Your Area', state: '' }
 
 export function telHref(phone) {
   return `tel:+1${phone.replace(/\D/g, '')}`
+}
+
+async function fromIpwhoIs() {
+  const res = await fetch('https://ipwho.is/')
+  const data = await res.json()
+  if (!data?.success || !data.city) throw new Error('ipwho.is: no city')
+  return { city: data.city, state: data.region_code || data.region || '' }
+}
+
+async function fromIpapiCo() {
+  const res = await fetch('https://ipapi.co/json/')
+  const data = await res.json()
+  if (!data?.city) throw new Error('ipapi.co: no city')
+  return { city: data.city, state: data.region_code || data.region || '' }
+}
+
+async function fromGeoJs() {
+  const res = await fetch('https://get.geojs.io/v1/ip/geo.json')
+  const data = await res.json()
+  if (!data?.city) throw new Error('geojs.io: no city')
+  return { city: data.city, state: data.region || '' }
+}
+
+const PROVIDERS = [fromIpwhoIs, fromIpapiCo, fromGeoJs]
+
+// Tries each free IP-geolocation provider in turn (some get blocked by ad
+// blockers/privacy extensions), falling back to a generic label if all fail.
+export async function detectLocation() {
+  for (const provider of PROVIDERS) {
+    try {
+      const result = await provider()
+      if (result?.city) return result
+    } catch {
+      // try the next provider
+    }
+  }
+  return FALLBACK_AREA
 }
