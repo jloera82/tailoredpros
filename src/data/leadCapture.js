@@ -1,21 +1,13 @@
 // Standard Information / Tailored Pros — Pest Control integration
 // https://app.standardinformation.io/integration/ebd686d4-4012-44ae-9f74-c9eb783c57eb
+//
+// The client posts to our own /api/submit-lead (a Vercel serverless
+// function) rather than exchange.standardinformation.io directly, since
+// that endpoint has no CORS headers and rejects browser POSTs. The
+// function also keeps the vendor Bearer token server-side only — see
+// api/submit-lead.js.
 
-// Defaults to the TEST endpoint so form submissions don't get bought/paid
-// for while the integration is still being verified. Switch to
-// CAPTURE_PROD_URL once test submissions have been confirmed on the
-// Standard Information side.
-export const CAPTURE_TEST_URL = 'https://exchange.standardinformation.io/capture_test'
-export const CAPTURE_PROD_URL = 'https://exchange.standardinformation.io/capture'
-export const CAPTURE_URL = CAPTURE_TEST_URL
-
-// Set VITE_LEAD_CAPTURE_API_KEY in .env.local (gitignored) — see .env.example.
-// Note: this is a client-only integration, so the key still ships inside the
-// built JS bundle and is visible to anyone who inspects network requests on
-// the live site. Keeping it out of an env var only keeps it out of the
-// public git history/source browsing; a real secret would need a backend
-// proxy to stay hidden from site visitors too.
-const API_KEY = import.meta.env.VITE_LEAD_CAPTURE_API_KEY || ''
+const PROXY_URL = '/api/submit-lead'
 
 // Campaign tracking IDs (Sub ID / Offer ID) — replace with real values from
 // your Standard Information account when available.
@@ -109,13 +101,9 @@ export async function submitLead(answers) {
   const ip = await getClientIp()
   const payload = buildLeadPayload(answers, ip)
 
-  const res = await fetch(CAPTURE_URL, {
+  const res = await fetch(PROXY_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Bearer ${API_KEY}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
 
