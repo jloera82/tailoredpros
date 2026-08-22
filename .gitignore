@@ -13,7 +13,7 @@ dist-ssr
 *.local
 .env
 .env.local
-public/api/lead-capture-config.php
+deploy/php-cpanel/api/lead-capture-config.php
 
 # Editor directories and files
 .vscode/*

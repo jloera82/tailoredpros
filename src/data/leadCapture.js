@@ -6,10 +6,13 @@
 // CORS headers and rejects browser POSTs. The proxy also keeps the vendor
 // Bearer token server-side only.
 //
-// Deploying to cPanel/shared PHP hosting -> public/api/submit-lead.php
-// Deploying to Vercel -> api/submit-lead.js (see that file instead)
+// Three server-side proxy implementations exist depending on where this
+// deploys — only one is wired up (PROXY_URL below) at a time:
+//   - cPanel Node.js App (current) -> server.js at the repo root
+//   - cPanel static + PHP hosting  -> public/api/submit-lead.php
+//   - Vercel                       -> api/submit-lead.js
 
-const PROXY_URL = '/api/submit-lead.php'
+const PROXY_URL = '/api/submit-lead'
 
 // Campaign tracking IDs (Sub ID / Offer ID) — replace with real values from
 // your Standard Information account when available.
