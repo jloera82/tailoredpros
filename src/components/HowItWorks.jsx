@@ -30,7 +30,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="how-it-works" id="process">
+    <section className="how-it-works">
       <div className="container">
         <div className="how-it-works-head">
           <p className="eyebrow">Our Simple Process</p>

@@ -11,7 +11,7 @@ const POINTS = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="why-us" id="why-us">
+    <section className="why-us">
       <div className="container why-us-inner">
         <div className="why-us-content">
           <p className="eyebrow">Why Choose Tailored Pros?</p>

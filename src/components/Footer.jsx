@@ -1,13 +1,14 @@
 import { Phone } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import Logo from './Logo.jsx'
 import './Footer.css'
 
 const NAV_LINKS = [
-  { label: 'Services', href: '#services' },
-  { label: 'Our Process', href: '#process' },
-  { label: 'Why Us', href: '#why-us' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', to: '/services' },
+  { label: 'Our Process', to: '/our-process' },
+  { label: 'Why Us', to: '/why-us' },
+  { label: 'FAQ', to: '/faq' },
+  { label: 'Contact', to: '/contact' },
 ]
 
 export default function Footer() {
@@ -20,7 +21,7 @@ export default function Footer() {
           <ul>
             {NAV_LINKS.map((link) => (
               <li key={link.label}>
-                <a href={link.href}>{link.label}</a>
+                <Link to={link.to}>{link.label}</Link>
               </li>
             ))}
           </ul>
@@ -39,8 +40,8 @@ export default function Footer() {
         <div className="footer-bottom">
           <p>© 2026 Tailored Pros, All Rights Reserved.</p>
           <div className="footer-legal">
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms</a>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms</Link>
           </div>
         </div>
       </div>

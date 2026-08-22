@@ -1,0 +1,47 @@
+.page-header {
+  background: var(--dark);
+  padding: 72px 0 92px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 0%, rgba(34, 163, 93, 0.22), transparent 55%);
+  pointer-events: none;
+}
+
+.page-header-inner {
+  position: relative;
+}
+
+.page-header-eyebrow {
+  display: block;
+}
+
+.page-header-title {
+  margin-top: 16px;
+  color: var(--white);
+  font-size: 44px;
+}
+
+.page-header-subtitle {
+  margin: 16px auto 0;
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    padding: 56px 0 68px;
+  }
+
+  .page-header-title {
+    font-size: 32px;
+  }
+}

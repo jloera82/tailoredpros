@@ -1,39 +1,34 @@
-import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Header from './components/Header.jsx'
-import Hero from './components/Hero.jsx'
-import TrustBar from './components/TrustBar.jsx'
-import WhyChooseUs from './components/WhyChooseUs.jsx'
-import HowItWorks from './components/HowItWorks.jsx'
-import Testimonials from './components/Testimonials.jsx'
-import CTA from './components/CTA.jsx'
 import Footer from './components/Footer.jsx'
-import { detectLocation, FALLBACK_AREA } from './data/serviceAreas.js'
+import ScrollToTop from './components/ScrollToTop.jsx'
+import Home from './pages/Home.jsx'
+import Services from './pages/Services.jsx'
+import Process from './pages/Process.jsx'
+import WhyUs from './pages/WhyUs.jsx'
+import Faq from './pages/Faq.jsx'
+import Contact from './pages/Contact.jsx'
+import Privacy from './pages/Privacy.jsx'
+import Terms from './pages/Terms.jsx'
+import NotFound from './pages/NotFound.jsx'
 
 export default function App() {
-  const [area, setArea] = useState(FALLBACK_AREA)
-
-  useEffect(() => {
-    let cancelled = false
-
-    detectLocation().then((result) => {
-      if (!cancelled) setArea(result)
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   return (
     <>
+      <ScrollToTop />
       <Header />
       <main>
-        <Hero />
-        <TrustBar area={area} />
-        <WhyChooseUs />
-        <HowItWorks />
-        <Testimonials area={area} />
-        <CTA />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/our-process" element={<Process />} />
+          <Route path="/why-us" element={<WhyUs />} />
+          <Route path="/faq" element={<Faq />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </main>
       <Footer />
     </>

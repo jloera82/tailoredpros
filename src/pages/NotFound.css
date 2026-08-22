@@ -1,0 +1,19 @@
+.not-found {
+  padding: 140px 0;
+  background: var(--white);
+}
+
+.not-found-inner {
+  text-align: center;
+}
+
+.not-found-inner h1 {
+  margin-top: 12px;
+  font-size: 36px;
+}
+
+.not-found-desc {
+  margin: 16px auto 32px;
+  max-width: 380px;
+  font-size: 15.5px;
+}

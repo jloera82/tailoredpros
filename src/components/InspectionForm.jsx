@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle2, ChevronDown, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './InspectionForm.css'
 
 const TOTAL_STEPS = 4
@@ -288,7 +289,7 @@ export default function InspectionForm() {
                   may contact you by phone, text, or email about your request — including using
                   automated dialing or pre-recorded messages — even if your number is on a
                   do-not-call list. Consent isn&rsquo;t required to purchase services. See our{' '}
-                  <a href="#privacy">Privacy Policy</a> and <a href="#terms">Terms</a>.
+                  <Link to="/privacy">Privacy Policy</Link> and <Link to="/terms">Terms</Link>.
                 </p>
               </>
             )}

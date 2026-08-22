@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import InspectionForm from './InspectionForm.jsx'
 import './Hero.css'
 
@@ -21,12 +22,12 @@ export default function Hero() {
             eco-friendly treatments you can trust.
           </p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#contact">
+            <Link className="btn btn-primary" to="/contact">
               Get Your Free Inspection <ArrowRight size={18} strokeWidth={2.5} />
-            </a>
-            <a className="btn btn-outline" href="#services">
+            </Link>
+            <Link className="btn btn-outline" to="/services">
               View Our Services
-            </a>
+            </Link>
           </div>
         </div>
 

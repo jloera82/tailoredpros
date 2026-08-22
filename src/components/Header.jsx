@@ -1,21 +1,22 @@
 import { Phone, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import Logo from './Logo.jsx'
 import './Header.css'
 
 const NAV_LINKS = [
-  { label: 'Services', href: '#services' },
-  { label: 'Our Process', href: '#process' },
-  { label: 'Why Us', href: '#why-us' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', to: '/services' },
+  { label: 'Our Process', to: '/our-process' },
+  { label: 'Why Us', to: '/why-us' },
+  { label: 'FAQ', to: '/faq' },
+  { label: 'Contact', to: '/contact' },
 ]
 
 export default function Header() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="site-header" id="top">
+    <header className="site-header">
       <div className="container site-header-inner">
         <Logo />
 
@@ -23,9 +24,13 @@ export default function Header() {
           <ul>
             {NAV_LINKS.map((link) => (
               <li key={link.label}>
-                <a href={link.href} onClick={() => setOpen(false)}>
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) => (isActive ? 'is-active' : '')}
+                  onClick={() => setOpen(false)}
+                >
                   {link.label}
-                </a>
+                </NavLink>
               </li>
             ))}
           </ul>
