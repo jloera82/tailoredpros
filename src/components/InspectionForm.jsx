@@ -1,33 +1,32 @@
 import { useState } from 'react'
 import { CheckCircle2, ChevronDown, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import {
+  PEST_TYPES,
+  PROPERTY_TYPES,
+  SERVICE_NEEDS,
+  URGENCY_OPTIONS,
+  CALL_TIMES,
+  PROJECT_STATUSES,
+  SQUARE_FOOTAGES,
+  CREDIT_RATINGS,
+  TCPA_CONSENT_TEXT,
+  submitLead,
+} from '../data/leadCapture.js'
 import './InspectionForm.css'
 
 const TOTAL_STEPS = 4
-
-const PEST_OPTIONS = [
-  'Ants',
-  'Bed Bugs',
-  'Cockroaches',
-  'Fleas & Ticks',
-  'Mice & Rodents',
-  'Mosquitoes',
-  'Spiders',
-  'Termites',
-  'Wasps & Bees',
-  'Other / Not Sure',
-]
-
-const PROPERTY_TYPES = ['Single family home', 'Multi-unit', 'Commercial', 'Condo', 'Mobile home']
-const SERVICE_NEEDS = ['Extermination', 'Inspection', 'Prevention', 'Removal']
-const URGENCY_OPTIONS = ['Within 1 week', 'Within 2 weeks', 'Within 1 month', 'Timing is flexible']
-const CALL_TIMES = ['Morning', 'Afternoon', 'Evening', 'Any time']
 
 const JOIN_AVATARS = [
   'https://randomuser.me/api/portraits/women/65.jpg',
   'https://randomuser.me/api/portraits/men/54.jpg',
   'https://randomuser.me/api/portraits/women/21.jpg',
 ]
+
+const SQUARE_FOOTAGE_LABELS = {
+  'Under 3000': 'Under 3,000 sq ft',
+  'Over 3000': 'Over 3,000 sq ft',
+}
 
 function formatPhone(value) {
   const digits = value.replace(/\D/g, '').slice(0, 10)
@@ -45,13 +44,16 @@ const INITIAL_ANSWERS = {
   owner: '',
   pestType: '',
   propertyType: '',
+  squareFootage: '',
   serviceNeed: '',
   urgency: '',
+  projectStatus: '',
   firstName: '',
   lastName: '',
   phone: '',
   email: '',
   bestTime: '',
+  creditRating: '',
   address: '',
   city: '',
   state: '',
@@ -81,16 +83,17 @@ function Field({ label, children }) {
 function isStepValid(step, a) {
   switch (step) {
     case 1:
-      return Boolean(a.pestType && a.propertyType)
+      return Boolean(a.pestType && a.propertyType && a.squareFootage)
     case 2:
-      return Boolean(a.serviceNeed && a.urgency)
+      return Boolean(a.serviceNeed && a.urgency && a.projectStatus)
     case 3:
       return Boolean(
         a.firstName.trim() &&
           a.lastName.trim() &&
           a.phone.replace(/\D/g, '').length === 10 &&
           /^\S+@\S+\.\S+$/.test(a.email) &&
-          a.bestTime
+          a.bestTime &&
+          a.creditRating
       )
     case 4:
       return Boolean(a.address.trim() && a.city.trim() && a.state.trim() && a.zip.trim().length >= 5)
@@ -102,6 +105,7 @@ function isStepValid(step, a) {
 export default function InspectionForm() {
   const [phase, setPhase] = useState('gate')
   const [answers, setAnswers] = useState(INITIAL_ANSWERS)
+  const [submitting, setSubmitting] = useState(false)
 
   const set = (field, value) => setAnswers((a) => ({ ...a, [field]: value }))
 
@@ -111,7 +115,26 @@ export default function InspectionForm() {
   }
 
   const goBack = () => setPhase((p) => (p === 1 ? 'gate' : p - 1))
-  const goNext = () => setPhase((p) => (p === TOTAL_STEPS ? 'success' : p + 1))
+
+  const goNext = () => {
+    if (phase !== TOTAL_STEPS) {
+      setPhase((p) => p + 1)
+      return
+    }
+
+    setSubmitting(true)
+    submitLead(answers)
+      .then((result) => {
+        console.info('Lead capture succeeded:', result)
+      })
+      .catch((err) => {
+        console.error('Lead capture failed:', err)
+      })
+      .finally(() => {
+        setSubmitting(false)
+        setPhase('success')
+      })
+  }
 
   const restart = () => {
     setAnswers(INITIAL_ANSWERS)
@@ -175,7 +198,7 @@ export default function InspectionForm() {
                   <div className="select-wrap">
                     <select value={answers.pestType} onChange={(e) => set('pestType', e.target.value)}>
                       <option value="">Select one</option>
-                      {PEST_OPTIONS.map((pest) => (
+                      {PEST_TYPES.map((pest) => (
                         <option key={pest} value={pest}>
                           {pest}
                         </option>
@@ -193,6 +216,18 @@ export default function InspectionForm() {
                       label={type}
                       selected={answers.propertyType === type}
                       onSelect={() => set('propertyType', type)}
+                    />
+                  ))}
+                </div>
+
+                <p className="hero-card-question">Property square footage</p>
+                <div className="option-grid two-col">
+                  {SQUARE_FOOTAGES.map((sf) => (
+                    <OptionCard
+                      key={sf}
+                      label={SQUARE_FOOTAGE_LABELS[sf]}
+                      selected={answers.squareFootage === sf}
+                      onSelect={() => set('squareFootage', sf)}
                     />
                   ))}
                 </div>
@@ -221,6 +256,18 @@ export default function InspectionForm() {
                       label={u}
                       selected={answers.urgency === u}
                       onSelect={() => set('urgency', u)}
+                    />
+                  ))}
+                </div>
+
+                <p className="hero-card-question">Where are you in the process?</p>
+                <div className="option-grid two-col">
+                  {PROJECT_STATUSES.map((status) => (
+                    <OptionCard
+                      key={status}
+                      label={status}
+                      selected={answers.projectStatus === status}
+                      onSelect={() => set('projectStatus', status)}
                     />
                   ))}
                 </div>
@@ -261,6 +308,18 @@ export default function InspectionForm() {
                     />
                   ))}
                 </div>
+
+                <p className="hero-card-question">Estimated credit rating</p>
+                <div className="option-grid two-col">
+                  {CREDIT_RATINGS.map((rating) => (
+                    <OptionCard
+                      key={rating}
+                      label={rating}
+                      selected={answers.creditRating === rating}
+                      onSelect={() => set('creditRating', rating)}
+                    />
+                  ))}
+                </div>
               </>
             )}
 
@@ -285,23 +344,20 @@ export default function InspectionForm() {
                 </div>
 
                 <p className="consent-text">
-                  By submitting, you agree that Tailored Pros and up to three local service partners
-                  may contact you by phone, text, or email about your request — including using
-                  automated dialing or pre-recorded messages — even if your number is on a
-                  do-not-call list. Consent isn&rsquo;t required to purchase services. See our{' '}
-                  <Link to="/privacy">Privacy Policy</Link> and <Link to="/terms">Terms</Link>.
+                  {TCPA_CONSENT_TEXT} See our <Link to="/privacy">Privacy Policy</Link> and{' '}
+                  <Link to="/terms">Terms</Link>.
                 </p>
               </>
             )}
           </div>
 
           <div className="step-nav">
-            <button type="button" className="step-back-btn" onClick={goBack}>
+            <button type="button" className="step-back-btn" onClick={goBack} disabled={submitting}>
               Back
             </button>
-            <button type="button" className="step-continue-btn" disabled={!stepValid} onClick={goNext}>
-              {phase === TOTAL_STEPS ? 'Get my free quotes' : 'Continue'}
-              <ArrowRight size={16} strokeWidth={2.5} />
+            <button type="button" className="step-continue-btn" disabled={!stepValid || submitting} onClick={goNext}>
+              {submitting ? 'Submitting…' : phase === TOTAL_STEPS ? 'Get my free quotes' : 'Continue'}
+              {!submitting && <ArrowRight size={16} strokeWidth={2.5} />}
             </button>
           </div>
         </>

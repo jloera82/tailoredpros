@@ -307,8 +307,13 @@
   font-size: 14px;
 }
 
-.step-back-btn:hover {
+.step-back-btn:hover:not(:disabled) {
   background: var(--bg-soft);
+}
+
+.step-back-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .step-continue-btn {
