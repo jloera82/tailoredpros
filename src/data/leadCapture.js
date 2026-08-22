@@ -1,13 +1,15 @@
 // Standard Information / Tailored Pros — Pest Control integration
 // https://app.standardinformation.io/integration/ebd686d4-4012-44ae-9f74-c9eb783c57eb
 //
-// The client posts to our own /api/submit-lead (a Vercel serverless
-// function) rather than exchange.standardinformation.io directly, since
-// that endpoint has no CORS headers and rejects browser POSTs. The
-// function also keeps the vendor Bearer token server-side only — see
-// api/submit-lead.js.
+// The client posts to our own same-origin proxy rather than
+// exchange.standardinformation.io directly, since that endpoint has no
+// CORS headers and rejects browser POSTs. The proxy also keeps the vendor
+// Bearer token server-side only.
+//
+// Deploying to cPanel/shared PHP hosting -> public/api/submit-lead.php
+// Deploying to Vercel -> api/submit-lead.js (see that file instead)
 
-const PROXY_URL = '/api/submit-lead'
+const PROXY_URL = '/api/submit-lead.php'
 
 // Campaign tracking IDs (Sub ID / Offer ID) — replace with real values from
 // your Standard Information account when available.
